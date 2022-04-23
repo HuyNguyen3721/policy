@@ -1,0 +1,2 @@
+rootProject.name = "PolicyAds"
+include ':app'
