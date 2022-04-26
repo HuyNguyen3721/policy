@@ -14,12 +14,13 @@ import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 
 class Splash : AppCompatActivity() {
     private var mInterstitialAd: InterstitialAd? = null
+    private var isPausing = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
         loadAds()
         Handler().postDelayed({
-            if (mInterstitialAd == null && (!isFinishing || !isDestroyed)) {
+            if (mInterstitialAd == null && (!isFinishing || !isDestroyed) && !isPausing) {
                 openMain()
             }
         }, 7000)
@@ -70,12 +71,24 @@ class Splash : AppCompatActivity() {
         if (mInterstitialAd != null && !isFinishing && !isDestroyed) {
             mInterstitialAd?.show(this)
         } else {
-            Log.d("TAG", "The interstitial ad wasn't ready yet.")
+            Log.d("TAG", "The interstitial ad wasn't ready yegit.")
         }
     }
 
     private fun openMain() {
-        startActivity(Intent(this, MainActivity::class.java))
-        finish()
+        if (!isFinishing || !isDestroyed && !isPausing) {
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        isPausing = true
+    }
+
+    override fun onResume() {
+        super.onResume()
+        isPausing = false
     }
 }
